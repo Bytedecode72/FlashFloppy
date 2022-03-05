@@ -21,7 +21,8 @@ USB_OTG_CORE_HANDLE USB_OTG_Core;
 void USB_OTG_BSP_Init(USB_OTG_CORE_HANDLE *pdev)
 {
     /* OTGFSPRE already clear in rcc->cfgr, OTG clock = PLL/3 */
-    rcc->ahbenr |= RCC_AHBENR_OTGFSEN; /* OTG clock enable */
+//    rcc->ahbenr |= RCC_AHBENR_OTGFSEN; /* OTG clock enable */
+    rcc->ahb2enr |= RCC_AHB2ENR_OTGFS1EN; /* OTG clock enable */
 }
 
 void USB_OTG_BSP_EnableInterrupt(USB_OTG_CORE_HANDLE *pdev)

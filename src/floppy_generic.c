@@ -100,7 +100,8 @@ struct exti_irq {
 #if defined(QUICKDISK)
 #include "gotek/quickdisk.c"
 #else
-#include "gotek/floppy.c"
+//#include "gotek/floppy.c"
+#include "gotek/floppy_at32f435.c"
 #endif
 
 /* Initialise IRQs according to statically-defined exti_irqs[]. */

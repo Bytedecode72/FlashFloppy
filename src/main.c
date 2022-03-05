@@ -2818,6 +2818,7 @@ static void factory_reset(void)
 
 static void update_firmware(void)
 {
+#if MCU == STM32F105
     /* Power up the backup-register interface and allow writes. */
     rcc->apb1enr |= RCC_APB1ENR_PWREN | RCC_APB1ENR_BKPEN;
     pwr->cr |= PWR_CR_DBP;
@@ -2825,6 +2826,7 @@ static void update_firmware(void)
     /* Indicate to bootloader that we want to perform firmware update. */
     bkp->dr1[0] = 0xdead;
     bkp->dr1[1] = 0xbeef;
+#endif
 
     /* Reset everything (except backup registers). */
     system_reset();

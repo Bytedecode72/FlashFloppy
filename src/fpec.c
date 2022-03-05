@@ -9,49 +9,53 @@
  * See the file COPYING for more details, or visit <http://unlicense.org>.
  */
 
-static void fpec_wait_and_clear(void)
+static void fpec_wait_and_clear(FLASH_BANK bank)
 {
-    while (flash->sr & FLASH_SR_BSY)
+    while (bank->sr & FLASH_SR_BSY)
         continue;
-    flash->sr = FLASH_SR_EOP | FLASH_SR_WRPRTERR | FLASH_SR_PGERR;
-    flash->cr = 0;
+    bank->sr = FLASH_SR_EOP | FLASH_SR_WRPRTERR | FLASH_SR_PGERR;
+    bank->cr = 0;
 }
 
 void fpec_init(void)
 {
+#if 0 /* ??? XXX */
     /* Erases and writes require the HSI oscillator. */
     rcc->cr |= RCC_CR_HSION;
     while (!(rcc->cr & RCC_CR_HSIRDY))
         cpu_relax();
+#endif
 
     /* Unlock the FPEC. */
-    if (flash->cr & FLASH_CR_LOCK) {
-        flash->keyr = 0x45670123;
-        flash->keyr = 0xcdef89ab;
+    if (flash->bank1.cr & FLASH_CR_LOCK) {
+        flash->unlock1 = 0x45670123;
+        flash->unlock1 = 0xcdef89ab;
     }
 
-    fpec_wait_and_clear();
+    fpec_wait_and_clear(&flash->bank1);
 }
 
 void fpec_page_erase(uint32_t flash_address)
 {
-    fpec_wait_and_clear();
-    flash->cr |= FLASH_CR_PER;
-    flash->ar = flash_address;
-    flash->cr |= FLASH_CR_STRT;
-    fpec_wait_and_clear();
+    FLASH_BANK bank = &flash->bank1;
+    fpec_wait_and_clear(bank);
+    bank->cr |= FLASH_CR_BLK_ER;
+    bank->ar = flash_address;
+    bank->cr |= FLASH_CR_ERASE_STRT;
+    fpec_wait_and_clear(bank);
 }
 
 void fpec_write(const void *data, unsigned int size, uint32_t flash_address)
 {
+    FLASH_BANK bank = &flash->bank1;
     uint16_t *_f = (uint16_t *)flash_address;
     const uint16_t *_d = data;
 
-    fpec_wait_and_clear();
+    fpec_wait_and_clear(bank);
     for (; size != 0; size -= 2) {
-        flash->cr |= FLASH_CR_PG;
+        bank->cr |= FLASH_CR_PG;
         *_f++ = *_d++; 
-        fpec_wait_and_clear();
+        fpec_wait_and_clear(bank);
    }
 }
 

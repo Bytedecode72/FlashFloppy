@@ -97,7 +97,7 @@ all:
 
 endif
 
-BAUD=115200
+BAUD=576000
 DEV=/dev/ttyUSB0
 SUDO=sudo
 

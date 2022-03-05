@@ -212,7 +212,9 @@ void board_init(void)
             /* If PF7 is floating then we may be running on a board with the
              * optional rotary-encoder header (SFRKC30). On earlier boards
              * PF6=VSS and PF7=VDD, hence we take care here. */
-            rcc->apb2enr |= RCC_APB2ENR_IOPFEN;
+//            rcc->apb2enr |= RCC_APB2ENR_IOPFEN;
+            rcc->ahb1enr |= RCC_AHB1ENR_GPIOFEN;
+
             gpio_configure_pin(gpiof, 7, GPI_pull_down);
             delay_us(100);
             has_kc30_header = (gpio_read_pin(gpiof, 7) == LOW);

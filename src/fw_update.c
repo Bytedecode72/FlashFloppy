@@ -85,6 +85,7 @@ static bool_t main_fw_requested(void)
 
 static bool_t fw_update_requested(void)
 {
+#if 0
     bool_t requested;
 
     /* Power up the backup-register interface and allow writes. */
@@ -99,6 +100,9 @@ static bool_t fw_update_requested(void)
     rcc->apb1enr = 0;
 
     return requested;
+#else
+    return 0;
+#endif
 }
 
 static void erase_old_firmware(void)
